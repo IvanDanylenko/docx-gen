@@ -1,4 +1,4 @@
-exports.tacticsGenDocx = function (req, res) {
+function writeToDocTemplateFile(data) {
   var PizZip = require('pizzip');
   var Docxtemplater = require('docxtemplater');
 
@@ -13,28 +13,11 @@ exports.tacticsGenDocx = function (req, res) {
 
   var doc = new Docxtemplater();
   doc.loadZip(zip);
-
-  //set the templateVariables
-  doc.setData({
-    date: '.11.19',
-    date_expanded: 'Восьмого листопада 2019 року',
-    platoons: '1, 2 навчальних взводів',
-    squadron: '1 навчальної роти',
-    time: 'з 8.00 до 13.05',
-    exercises: [
-      {
-        exercise_name: 'загальним керівником занять',
-        exercise_chief: 'тимчасово виконуючого обов’язки начальника циклової комісії загально-військових дисциплін старшого сержанта Яремчука В.М.;'
-      },
-      {
-        exercise_name: 'керівником заняття з безпеки бою',
-        exercise_chief: 'командира 4 навчального взводу 1 навчальної роти молодшого лейтенанта Нижника О.А.;'
-      }
-    ]
-  });
+  // set data for template
+  doc.setData(data)
 
   try {
-    // render the document (replace all occurences of {first_name} by John, {last_name} by Doe, ...)
+    // render the document
     doc.render()
   }
   catch (error) {
@@ -54,6 +37,41 @@ exports.tacticsGenDocx = function (req, res) {
 
   // buf is a nodejs buffer, you can either write it to a file or do anything else with it.
   fs.writeFileSync(path.resolve(__dirname, '../templates/tactics_output.docx'), buf);
+}
+
+exports.tacticsGenDocx = function (req, res) {
+  if(!req.body) return res.sendStatus(400);
+  const body = req.body;
+
+  //set the templateVariables
+  const mockData = {
+    date: '.11.19',
+    date_expanded: 'Восьмого листопада 2019 року',
+    platoons: '1, 2 навчальних взводів',
+    squadron: '1 навчальної роти',
+    time: 'з 8.00 до 13.05',
+    exercises: [
+      {
+        exercise_name: 'загальним керівником занять',
+        exercise_chief: 'тимчасово виконуючого обов’язки начальника циклової комісії загально-військових дисциплін старшого сержанта Яремчука В.М.;'
+      },
+      {
+        exercise_name: 'керівником заняття з безпеки бою',
+        exercise_chief: 'командира 4 навчального взводу 1 навчальної роти молодшого лейтенанта Нижника О.А.;'
+      }
+    ]
+  };
+
+  const data = {
+    date: body.date,
+    date_expanded: body.date_expanded,
+    platoons: body.platoons,
+    squadron: body.squadron,
+    time: body.time,
+    exercises: body.exercises
+  };
+
+  writeToDocTemplateFile(data);
 
   // RESPONCE
   res.status(200).json({ data: 'Document rendered and writed' });

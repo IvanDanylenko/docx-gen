@@ -6,12 +6,9 @@ import WeaponsTraining from '../weapons-training';
 
 export default class OrderGenerationForm extends Component {
 
-  constructor () {
-    super();
-    this.state = {
-      order: 'tactics'
-    }
-    // this.handleOrderChange = this.handleOrderChange.bind(this);
+  state = {
+    order: 'tactics',
+    data: {}
   }
 
   handleSubmit = (event) => {
