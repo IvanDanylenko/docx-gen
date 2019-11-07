@@ -1,5 +1,5 @@
 exports.testFunc = function(req, res){
-  res.status(200).json({data: 'My response data'});
+  res.status(200).json({data: JSON.stringify(req)});
 };
 
 exports.testPostFunc = function(req, res) {
