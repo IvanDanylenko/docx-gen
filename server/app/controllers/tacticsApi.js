@@ -7,7 +7,7 @@ exports.tacticsGenDocx = function (req, res) {
 
   //Load the docx file as a binary
   var content = fs
-    .readFileSync(path.resolve(__dirname, 'input.docx'), 'binary');
+    .readFileSync(path.resolve(__dirname, '../templates/tactics.docx'), 'binary');
 
   var zip = new PizZip(content);
 
@@ -16,10 +16,21 @@ exports.tacticsGenDocx = function (req, res) {
 
   //set the templateVariables
   doc.setData({
-    first_name: 'John',
-    last_name: 'Doe',
-    phone: '0652455478',
-    description: 'New Website'
+    date: '.11.19',
+    date_expanded: 'Восьмого листопада 2019 року',
+    platoons: '1, 2 навчальних взводів',
+    squadron: '1 навчальної роти',
+    time: 'з 8.00 до 13.05',
+    exercises: [
+      {
+        exercise_name: 'загальним керівником занять',
+        exercise_chief: 'тимчасово виконуючого обов’язки начальника циклової комісії загально-військових дисциплін старшого сержанта Яремчука В.М.;'
+      },
+      {
+        exercise_name: 'керівником заняття з безпеки бою',
+        exercise_chief: 'командира 4 навчального взводу 1 навчальної роти молодшого лейтенанта Нижника О.А.;'
+      }
+    ]
   });
 
   try {
@@ -42,9 +53,9 @@ exports.tacticsGenDocx = function (req, res) {
     .generate({ type: 'nodebuffer' });
 
   // buf is a nodejs buffer, you can either write it to a file or do anything else with it.
-  fs.writeFileSync(path.resolve(__dirname, 'output.docx'), buf);
+  fs.writeFileSync(path.resolve(__dirname, '../templates/tactics_output.docx'), buf);
 
   // RESPONCE
-  res.status(200).json({ data: 'My response data' });
+  res.status(200).json({ data: 'Document rendered and writed' });
 
 }
