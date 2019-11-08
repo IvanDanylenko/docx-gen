@@ -27,22 +27,28 @@ export default class OrderGenerationForm extends Component {
     return (
       <form className="order-form" onSubmit={this.handleSubmit}>
         <h2>Форма генерації наказів</h2>
-        <div className="form-group">
-          <label htmlFor="exampleInputEmail1">Виберіть роту</label>
-          <select className="custom-select" defaultValue="1" id="inlineFormCustomSelectPref">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-          </select>
+        {/* Squadron */}
+        <div className="form-group row">
+          <label htmlFor="squadron" className="col-sm-2 col-form-label">Виберіть роту</label>
+          <div className="col-sm-10">
+            <select className="custom-select" defaultValue="1" id="squadron">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
         </div>
-        <div className="form-group">
-          <label htmlFor="exampleInputEmail1">Укажіть взвод(и)</label>
-          <input type="text" className="form-control"/>
-          <small id="emailHelp" className="form-text text-muted">(Наприклад: 0 - всі взводи; 1,3 - перелік; 1-3 - проміжок)</small>
+        {/* Platoons */}
+        <div className="form-group row">
+          <label htmlFor="platoons" className="col-sm-2 col-form-label">Укажіть взвод(и)</label>
+          <div className="col-sm-10">
+            <input id="platoons" type="text" className="form-control"/>
+            <small className="form-text text-muted">(Наприклад: 0 - всі взводи; 1,3 - перелік; 1-3 - проміжок)</small>
+          </div>
         </div>
-        <div className="form-group">
+        <div className="form-group row">
           <label htmlFor="exampleInputEmail1">Виберіть вид наказу</label>
           <select onChange={ this.handleOrderChange } className="custom-select" defaultValue="tactics" id="inlineFormCustomSelectPref">
             <option value="tactics">Тактика</option>
