@@ -1,13 +1,52 @@
 import React from 'react';
+import ReactInputSelect from 'react-input-select';
+import chiefs from '../../database/exercise_chiefs.json';
+import './tactics-page.scss';
+
+const mockData = [{
+  name: 'testName1',
+  displayValue: 'testValue1'
+}, {
+  name: 'testName2',
+  displayValue: 'testValue2'
+}, {
+  name: 'testName3',
+  displayValue: 'testValue3'
+}, {
+  name: 'testName4',
+  displayValue: 'testValue4'
+}, {
+  name: 'testName5',
+  displayValue: 'testValue5'
+}, {
+  name: 'testName6',
+  displayValue: 'testValue6'
+}, {
+  name: 'testName7',
+  displayValue: 'testValue7'
+}, {
+  name: 'testName8',
+  displayValue: 'testValue8'
+}, {
+  name: 'testName9',
+  displayValue: 'testValue9'
+}]
 
 class TacticsPage extends React.Component {
 
   state = {
     date: '.11.19',
     date_expanded: 'Восьмого листопада 2019 року',
-    platoons: '1, 2 навчальних взводів',
+    platoons: '',
+    platoons_expanded: '',
     squadron: '1 навчальної роти',
-    time: 'з 8.00 до 13.05',
+    time: [
+      {
+        time: 'з 8.00 до 13.05',
+        platoons: '1, 2'
+      }
+    ],
+    exerciseChiefInput: '',
     exercises: [
       {
         exercise_name: 'загальним керівником занять',
@@ -48,7 +87,7 @@ class TacticsPage extends React.Component {
       }
     }
     const date = '.' + month + '.' + year;
-    this.setState({date});
+    this.setState({ date });
   }
 
   // Set expanded wordly date like "Восьмого листопада 2019 року"
@@ -71,7 +110,7 @@ class TacticsPage extends React.Component {
     ];
     switch (day) {
       case 1:
-        str="Першого";
+        str = "Першого";
         break;
       case 8:
         console.log("case 8");
@@ -98,21 +137,83 @@ class TacticsPage extends React.Component {
 
   handlePlatoonsChange = (e) => {
     if (e.target.value.trim() === "") {
-      this.setState({ platoons: "" });
+      this.setState({
+        platoons: "",
+        platoons_expanded: ""
+      });
       return;
     }
-    if (e.target.value.indexOf(",") !== -1 && e.target.value.indexOf("-") !== -1) {
-      this.setState({ platoons: e.target.value + " навчального взводу" });
+
+    this.setState({ platoons: e.target.value });
+
+    if (e.target.value.indexOf(",") !== -1 || e.target.value.indexOf("-") !== -1) {
+      this.setState({ platoons_expanded: e.target.value + " навчальних взводів" });
     } else {
-      this.setState({ platoons: e.target.value + " навчальних взводів" });
+      this.setState({ platoons_expanded: e.target.value + " навчального взводу" });
     }
   }
 
+  handleTimeAdd = () => {
+    this.setState({
+      time: this.state.time.concat([{ time: "", platoons: this.state.platoons_short }])
+    });
+  }
+
+  handleExerciseChiefChange = (e) => {
+
+  }
+
+  customFilterFunction = (data, filterValue) => {
+    if (!data || (data && data.length === 0)) {
+      return null
+    }
+
+    if (filterValue.toString().trim().length === 0) {
+      return data
+    }
+
+    return data
+      .map((city) => {
+        if (city.toString().toLowerCase().includes(filterValue.toLowerCase())) {
+          return city
+        }
+      })
+      .filter((city) => city)
+      .sort((cityA, cityB) => {
+        let aIndex = cityA.toString().toLowerCase().indexOf(filterValue.toLowerCase())
+        let bIndex = cityB.toString().toLowerCase().indexOf(filterValue.toLowerCase())
+
+        if (aIndex > bIndex) {
+          return 1
+        } else if (aIndex < bIndex) {
+          return -1
+        }
+
+        return 0
+      })
+  }
+
+  handleOnChange = (e) => {
+    this.setState({ exerciseChiefInput: e.target.value })
+  }
+
+  handleOnBlur = (e) => {
+    this.setState({ exerciseChiefInput: e.target.value })
+  }
+
+  handleOptionClick = (item, arr, e) => {
+    this.setState({ exerciseChiefInput: item })
+  }
+
   render() {
+    const data = mockData
+    const displayAll = false
+    const isObject = false
+
     return (
       <div className="tactics-page">
         <div className="container">
-          <form action="#" className="tactics-form">
+          <form action="#" autoComplete="off" className="tactics-form">
             <h2>Наказ на тактику</h2>
             {/* Squadron */}
             <div className="form-group row">
@@ -143,7 +244,7 @@ class TacticsPage extends React.Component {
                 <small className="form-text text-muted">(Напр.: 0 або "" - всі взводи; 1,3 - перелік; 1-3 - проміжок)</small>
               </div>
               <div className="col-sm-6">
-                <span>{this.state.platoons}</span>
+                <span>{this.state.platoons_expanded}</span>
               </div>
             </div>
             {/* Date short */}
@@ -163,7 +264,7 @@ class TacticsPage extends React.Component {
             <div className="form-group row">
               <label htmlFor="date_expanded" className="col-sm-2 col-form-label">Дата словами:</label>
               <div className="col-sm-4">
-                <input id="date_expanded" type="text" className="form-control" 
+                <input id="date_expanded" type="text" className="form-control"
                   value={this.state.date_expanded}
                   onChange={this.handleDateExpandedChange}
                   placeholder="Восьмого листопада 2019 року" />
@@ -178,13 +279,20 @@ class TacticsPage extends React.Component {
               <div className="col-sm-4">
                 <div className="row mb-1">
                   <div className="col-6">
-                    <input type="text" className="form-control" placeholder="з 8.00 до 13.05" />
+                    <select className="custom-select"
+                      onChange={this.handleTimeChange}
+                      defaultValue="1" id="time">
+                      <option value="1">з 8.00 до 13.05</option>
+                      <option value="2">з 17.00 до 22.00</option>
+                    </select>
+                    {/* <input type="text" className="form-control" placeholder="з 8.00 до 13.05" /> */}
                   </div>
                   <div className="col-6">
                     <input type="text" className="form-control" placeholder="взвода" />
                   </div>
                 </div>
-                <button className="btn btn-primary time-add d-block ml-auto">+</button>
+                <button className="btn btn-primary time-add d-block ml-auto"
+                  onClick={this.handleTimeAdd}>+</button>
               </div>
               <div className="col-sm-6">
                 Текст заміни
@@ -210,7 +318,27 @@ class TacticsPage extends React.Component {
                   </div>
                   <div className="col-6">
                     {/* Exercise chief */}
-                    <input type="text" className="form-control" placeholder="керівник" />
+                      {/* <input type="text" className="form-control" placeholder="керівник"
+                        onChange={this.handleExerciseChiefChange} /> */}
+                    
+                    <ReactInputSelect
+                      containerClass='chiefInputContainer'
+                      containerId='containerIdTest'
+                      data={data}
+                      dataFilter={this.customFilterFunction}
+                      displayAll = {displayAll}
+                      dropdownId = 'dropdownIdTest'
+                      dropdownOptionId = 'dropdownOptionIdTest'
+                      dropdownOptionClass = 'form-control'
+                      onChange = {this.handleOnChange}
+                      onBlur = {this.handleOnBlur}
+                      onOptionClick = {this.handleOptionClick}
+                      inputClass = 'form-control'
+                      inputId = 'inputIdTest'
+                      isObject = {isObject}
+                      value={this.state.exerciseChiefInput}
+                    />
+
                   </div>
                 </div>
                 <div className="row">
