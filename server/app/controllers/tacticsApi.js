@@ -71,9 +71,17 @@ exports.tacticsGenDocx = function (req, res) {
     exercises: body.exercises
   };
 
-  writeToDocTemplateFile(data);
+  writeToDocTemplateFile(body);
 
   // RESPONCE
-  res.status(200).json({ data: 'Document rendered and writed' });
+  res.status(200).json("Document generated");
 
+}
+
+exports.tacticsTest = function (req, res) {
+  if(!req.body) return res.sendStatus(400);
+  const body = req.body;
+
+  // RESPONCE
+  res.status(200).json({ data: body });
 }

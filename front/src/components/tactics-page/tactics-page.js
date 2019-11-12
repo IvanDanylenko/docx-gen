@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import ReactInputSelect from 'react-input-select';
 import chiefs from '../../database/exercise_chiefs.json';
 import './tactics-page.scss';
@@ -37,16 +38,16 @@ class TacticsPage extends React.Component {
   state = {
     date: '.11.19',
     date_expanded: 'Восьмого листопада 2019 року',
-    platoons: '',
-    platoons_expanded: '',
+    platoons_expanded: '1, 2 навчальних взводів',
     squadron: '1 навчальної роти',
     time: [
       {
         time: 'з 8.00 до 13.05',
+        platoons_expanded: '',
+        //helping state
         platoons: '1, 2'
       }
     ],
-    exerciseChiefInput: '',
     exercises: [
       {
         exercise_name: 'загальним керівником занять',
@@ -56,7 +57,11 @@ class TacticsPage extends React.Component {
         exercise_name: 'керівником заняття з безпеки бою',
         exercise_chief: 'командира 4 навчального взводу 1 навчальної роти молодшого лейтенанта Нижника О.А.;'
       }
-    ]
+    ],
+
+    // helping state
+    platoons: '',
+    exerciseChiefInput: ''
   }
 
   componentDidMount() {
@@ -205,6 +210,19 @@ class TacticsPage extends React.Component {
     this.setState({ exerciseChiefInput: item })
   }
 
+  handleSubmit = e => {
+    e.preventDefault();
+    
+    const data = this.state;
+
+    axios.post(`http://localhost:8080/api/tactics`, data)
+      .then(res => {
+        console.log(res);
+      }, err => {
+        console.log(err);
+      });
+  }
+
   render() {
     const data = mockData
     const displayAll = false
@@ -213,7 +231,8 @@ class TacticsPage extends React.Component {
     return (
       <div className="tactics-page">
         <div className="container">
-          <form action="#" autoComplete="off" className="tactics-form">
+          <form action="#" autoComplete="off" className="tactics-form"
+            onSubmit={this.handleSubmit}>
             <h2>Наказ на тактику</h2>
             {/* Squadron */}
             <div className="form-group row">
@@ -348,8 +367,9 @@ class TacticsPage extends React.Component {
                   </div>
                   <div className="col-12">
                     Текст заміни
+                  </div>
                 </div>
-                </div>
+                <button type="submit" className="btn btn-primary">Згенерувати</button>
               </div>
             </div>
           </form>
