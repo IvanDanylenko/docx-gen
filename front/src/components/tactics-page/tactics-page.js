@@ -1,7 +1,9 @@
 import React from 'react';
 import axios from 'axios';
-import ReactInputSelect from 'react-input-select';
+import ReactSelectInput from 'react-select-input';
 import chiefs from '../../database/exercise_chiefs.json';
+import days from '../../database/days.json';
+import months from '../../database/months.json';
 import './tactics-page.scss';
 
 const mockData = [{
@@ -46,10 +48,6 @@ class TacticsPage extends React.Component {
       {
         exercise_name: 'загальним керівником занять',
         exercise_chief: 'тимчасово виконуючого обов’язки начальника циклової комісії загально-військових дисциплін старшого сержанта Яремчука В.М.;'
-      },
-      {
-        exercise_name: 'керівником заняття з безпеки бою',
-        exercise_chief: 'командира 4 навчального взводу 1 навчальної роти молодшого лейтенанта Нижника О.А.;'
       }
     ],
 
@@ -58,7 +56,9 @@ class TacticsPage extends React.Component {
     time: ['з 08.00 до 13.05'],
     // exerciseChiefInput: '',
     inputChiefsValue: '',
-    inputChiefsObject: {}
+    inputChiefsObject: {},
+    isPheldsher: true,
+    isMainChief: true
   }
 
   componentDidMount() {
@@ -199,6 +199,22 @@ class TacticsPage extends React.Component {
     });
   }
 
+  togglePheldsher = () => {
+    this.setState(({isPheldsher}) => {
+      return {
+        isPheldsher: !isPheldsher
+      }
+    });
+  }
+
+  toggleMainChief = () => {
+    this.setState(({isMainChief}) => {
+      return {
+        isMainChief: !isMainChief
+      }
+    });
+  }
+
   handleSubmit = e => {
     e.preventDefault();
 
@@ -305,6 +321,26 @@ class TacticsPage extends React.Component {
             <div className="form-group row">
               <label htmlFor="time" className="col-sm-2 col-form-label">Заняття:</label>
               <div className="col-sm-10">
+                <div className="row mb-2">
+                  <div className="col-12 d-flex flex-row">
+                    <div class="custom-control custom-checkbox mr-3">
+                      <input type="checkbox" 
+                        className="custom-control-input" id="mainChief"
+                        checked={this.state.isMainChief}
+                        onChange={this.toggleMainChief} />
+                      <label className="custom-control-label" 
+                        htmlFor="mainChief">Загальний керівник</label>
+                    </div>
+                    <div class="custom-control custom-checkbox">
+                      <input type="checkbox" 
+                        className="custom-control-input" id="medicalWorker"
+                        checked={this.state.isPheldsher}
+                        onChange={this.togglePheldsher} />
+                      <label className="custom-control-label" 
+                        htmlFor="medicalWorker">Черговий фельдшер</label>
+                    </div>
+                  </div>
+                </div>
                 {this.state.exercises.map((item, index) => {
                   return (
                     <div key={index} className="row mb-1">
@@ -326,7 +362,7 @@ class TacticsPage extends React.Component {
                         {/* <input type="text" className="form-control" placeholder="керівник"
                         onChange={this.handleExerciseChiefChange} /> */}
 
-                        <ReactInputSelect
+                        {/* <ReactInputSelect
                           containerClass='chiefInputContainer'
                           containerId='containerIdTest'
                           data={chiefs}
@@ -342,6 +378,14 @@ class TacticsPage extends React.Component {
                           inputClass='form-control'
                           isObject={true}
                           value={this.state.inputChiefsValue}
+                        /> */}
+
+                        <ReactSelectInput
+                          placeholder="керівник"
+                          className="exercise-chief"
+                          autoFocus={false}
+                          options={[{ label: "Водіння", value: "f"},
+                          { label: "Виживання", value: "f2"}]}
                         />
 
                       </div>
