@@ -38,16 +38,10 @@ class TacticsPage extends React.Component {
   state = {
     date: '.11.19',
     date_expanded: 'Восьмого листопада 2019 року',
-    platoons_expanded: '1, 2 навчальних взводів',
+    platoons_expanded: '',
     squadron: '1 навчальної роти',
-    time: [
-      {
-        time: 'з 8.00 до 13.05',
-        platoons_expanded: '',
-        //helping state
-        platoons: '1, 2'
-      }
-    ],
+    // Час проведення заняття з 08.00 до 13.05 та з 20.00 до 24.00.
+    time_expanded: 'з 08.00 до 13.05',
     exercises: [
       {
         exercise_name: 'загальним керівником занять',
@@ -61,7 +55,10 @@ class TacticsPage extends React.Component {
 
     // helping state
     platoons: '',
-    exerciseChiefInput: ''
+    time: ['з 08.00 до 13.05'],
+    // exerciseChiefInput: '',
+    inputChiefsValue: '',
+    inputChiefsObject: {}
   }
 
   componentDidMount() {
@@ -158,44 +155,33 @@ class TacticsPage extends React.Component {
     }
   }
 
+  handleTimeChange = (e) => {
+    console.log("Time change feature isn't developed");
+  }
+
   handleTimeAdd = () => {
     this.setState({
-      time: this.state.time.concat([{ time: "", platoons: this.state.platoons_short }])
+      time: this.state.time.concat(['з 17.00 до 22.00'])
+    }, () => {
+      this.setState({
+        time_expanded: this.state.time.join(' та ')
+      })
     });
   }
 
-  handleExerciseChiefChange = (e) => {
-
+  handleExerciseAdd = () => {
+    this.setState({
+      exercises: this.state.exercises.concat([{
+        exercise_name: '',
+        exercise_chief: ''
+      }])
+    })
   }
 
-  customFilterFunction = (data, filterValue) => {
-    if (!data || (data && data.length === 0)) {
-      return null
-    }
-
-    if (filterValue.toString().trim().length === 0) {
-      return data
-    }
-
-    return data
-      .map((city) => {
-        if (city.toString().toLowerCase().includes(filterValue.toLowerCase())) {
-          return city
-        }
-      })
-      .filter((city) => city)
-      .sort((cityA, cityB) => {
-        let aIndex = cityA.toString().toLowerCase().indexOf(filterValue.toLowerCase())
-        let bIndex = cityB.toString().toLowerCase().indexOf(filterValue.toLowerCase())
-
-        if (aIndex > bIndex) {
-          return 1
-        } else if (aIndex < bIndex) {
-          return -1
-        }
-
-        return 0
-      })
+  handleExerciseChiefChange = (e) => {
+    this.setState({
+      inputChiefsValue: e.target.value
+    })
   }
 
   handleOnChange = (e) => {
@@ -206,13 +192,16 @@ class TacticsPage extends React.Component {
     this.setState({ exerciseChiefInput: e.target.value })
   }
 
-  handleOptionClick = (item, arr, e) => {
-    this.setState({ exerciseChiefInput: item })
+  handleChiefsOptionClick = (item, arr, e) => {
+    this.setState({
+      inputChiefsValue: item.name,
+
+    });
   }
 
   handleSubmit = e => {
     e.preventDefault();
-    
+
     const data = this.state;
 
     axios.post(`http://localhost:8080/api/tactics`, data)
@@ -237,7 +226,7 @@ class TacticsPage extends React.Component {
             {/* Squadron */}
             <div className="form-group row">
               <label htmlFor="squadron" className="col-sm-2 col-form-label">Виберіть роту:</label>
-              <div className="col-sm-4">
+              <div className="col-sm-5">
                 <select className="custom-select"
                   onChange={this.handleSquadronChange}
                   defaultValue="1" id="squadron">
@@ -248,122 +237,123 @@ class TacticsPage extends React.Component {
                   <option value="5">5</option>
                 </select>
               </div>
-              <div className="col-sm-6">
+              <div className="col-sm-5">
                 <span>{this.state.squadron}</span>
               </div>
             </div>
             {/* Platoons */}
             <div className="form-group row">
               <label htmlFor="platoons" className="col-sm-2 col-form-label">Укажіть взвод(и):</label>
-              <div className="col-sm-4">
+              <div className="col-sm-5">
                 <input id="platoons" type="text"
                   value={this.state.platoons}
                   onChange={this.handlePlatoonsChange}
                   className="form-control" />
                 <small className="form-text text-muted">(Напр.: 0 або "" - всі взводи; 1,3 - перелік; 1-3 - проміжок)</small>
               </div>
-              <div className="col-sm-6">
+              <div className="col-sm-5">
                 <span>{this.state.platoons_expanded}</span>
               </div>
             </div>
             {/* Date short */}
             <div className="form-group row">
               <label htmlFor="date" className="col-sm-2 col-form-label">Дата наказу:</label>
-              <div className="col-sm-4">
+              <div className="col-sm-5">
                 <input id="date" type="text" className="form-control"
                   value={this.state.date}
                   onChange={this.handleDateChange}
                   placeholder=".11.19" />
               </div>
-              <div className="col-sm-6">
+              <div className="col-sm-5">
                 <span>{this.state.date}</span>
               </div>
             </div>
             {/* Date expanded */}
             <div className="form-group row">
               <label htmlFor="date_expanded" className="col-sm-2 col-form-label">Дата словами:</label>
-              <div className="col-sm-4">
+              <div className="col-sm-5">
                 <input id="date_expanded" type="text" className="form-control"
                   value={this.state.date_expanded}
                   onChange={this.handleDateExpandedChange}
                   placeholder="Восьмого листопада 2019 року" />
               </div>
-              <div className="col-sm-6">
+              <div className="col-sm-5">
                 <span>{this.state.date_expanded}</span>
               </div>
             </div>
             {/* Time */}
             <div className="form-group row">
               <label htmlFor="time" className="col-sm-2 col-form-label">Час проведення:</label>
-              <div className="col-sm-4">
-                <div className="row mb-1">
-                  <div className="col-6">
-                    <select className="custom-select"
-                      onChange={this.handleTimeChange}
-                      defaultValue="1" id="time">
-                      <option value="1">з 8.00 до 13.05</option>
-                      <option value="2">з 17.00 до 22.00</option>
-                    </select>
-                    {/* <input type="text" className="form-control" placeholder="з 8.00 до 13.05" /> */}
-                  </div>
-                  <div className="col-6">
-                    <input type="text" className="form-control" placeholder="взвода" />
-                  </div>
-                </div>
+              <div className="col-sm-5">
+                {this.state.time.map((item, index) => (
+                  <select key={index} className="custom-select mb-1"
+                    onChange={this.handleTimeChange}
+                    defaultValue={item}>
+                    <option value="з 8.00 до 13.05">з 8.00 до 13.05</option>
+                    <option value="з 17.00 до 22.00">з 17.00 до 22.00</option>
+                  </select>
+                ))}
+                {/* <input type="text" className="form-control" placeholder="з 8.00 до 13.05" /> */}
                 <button className="btn btn-primary time-add d-block ml-auto"
                   onClick={this.handleTimeAdd}>+</button>
               </div>
-              <div className="col-sm-6">
-                Текст заміни
-            </div>
+              <div className="col-sm-5">
+                {this.state.time_expanded}
+              </div>
             </div>
             {/* Exercises */}
             <div className="form-group row">
               <label htmlFor="time" className="col-sm-2 col-form-label">Заняття:</label>
               <div className="col-sm-10">
-                <div className="row mb-1">
-                  <div className="col-6">
-                    {/* Exercise name */}
-                    <select className="custom-select" defaultValue="1" id="exercise_name">
-                      <option value="1">загальний керівник</option>
-                      <option value="2">інженерна підготовка</option>
-                      <option value="3">психологічна підготовка</option>
-                      <option value="4">розвідувальна підготовка</option>
-                      <option value="5">військова топографія</option>
-                      <option value="6">підготовка зі зв'язку</option>
-                      <option value="7">РХБ захист</option>
-                      <option value="8">фельдшер</option>
-                    </select>
-                  </div>
-                  <div className="col-6">
-                    {/* Exercise chief */}
-                      {/* <input type="text" className="form-control" placeholder="керівник"
+                {this.state.exercises.map((item, index) => {
+                  return (
+                    <div key={index} className="row mb-1">
+                      <div className="col-6">
+                        {/* Exercise name */}
+                        <select className="custom-select" defaultValue="1" id="exercise_name">
+                          <option value="1">загальний керівник</option>
+                          <option value="2">інженерна підготовка</option>
+                          <option value="3">психологічна підготовка</option>
+                          <option value="4">розвідувальна підготовка</option>
+                          <option value="5">військова топографія</option>
+                          <option value="6">підготовка зі зв'язку</option>
+                          <option value="7">РХБ захист</option>
+                          <option value="8">фельдшер</option>
+                        </select>
+                      </div>
+                      <div className="col-6">
+                        {/* Exercise chief */}
+                        {/* <input type="text" className="form-control" placeholder="керівник"
                         onChange={this.handleExerciseChiefChange} /> */}
-                    
-                    <ReactInputSelect
-                      containerClass='chiefInputContainer'
-                      containerId='containerIdTest'
-                      data={data}
-                      dataFilter={this.customFilterFunction}
-                      displayAll = {displayAll}
-                      dropdownId = 'dropdownIdTest'
-                      dropdownOptionId = 'dropdownOptionIdTest'
-                      dropdownOptionClass = 'form-control'
-                      onChange = {this.handleOnChange}
-                      onBlur = {this.handleOnBlur}
-                      onOptionClick = {this.handleOptionClick}
-                      inputClass = 'form-control'
-                      inputId = 'inputIdTest'
-                      isObject = {isObject}
-                      value={this.state.exerciseChiefInput}
-                    />
 
-                  </div>
-                </div>
+                        <ReactInputSelect
+                          containerClass='chiefInputContainer'
+                          containerId='containerIdTest'
+                          data={chiefs}
+                          dataKey="name"
+                          // dataFilter={this.customFilterFunction}
+                          displayAll={displayAll}
+                          dropdownId='dropdownIdTest'
+                          dropdownOptionId='dropdownOptionIdTest'
+                          dropdownOptionClass='form-control'
+                          onChange={this.handleExerciseChiefChange}
+                          onBlur={this.handleOnBlur}
+                          onOptionClick={this.handleChiefsOptionClick}
+                          inputClass='form-control'
+                          isObject={true}
+                          value={this.state.inputChiefsValue}
+                        />
+
+                      </div>
+                    </div>
+                  )
+                })}
+
                 <div className="row">
                   <div className="col-12">
                     {/* Add exercise */}
-                    <button className="btn btn-primary time-add d-block ml-auto">+</button>
+                    <button className="btn btn-primary time-add d-block ml-auto"
+                      onClick={this.handleExerciseAdd}>+</button>
                   </div>
                   <div className="col-12">
                     Текст заміни
