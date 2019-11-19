@@ -77,19 +77,41 @@ export const DateExpanded = ({ date_expanded, handleDateExpandedChange }) => {
 }
 
 export const Time = ({ time, time_expanded, handleTimeChange, handleTimeAdd }) => {
+  const hours = [
+    { label: '8.00', value: '8.00' },
+    { label: '13.05', value: '13.05' },
+    { label: '18.00', value: '18.00' },
+    { label: '20.00', value: '20.00' },
+    { label: '21.00', value: '21.00' },
+    { label: '22.00', value: '22.00' },
+    { label: '24.00', value: '24.00' }
+  ];
+
   return (
     <div className="form-group row">
       <label htmlFor="time" className="col-sm-2 col-form-label">Час проведення:</label>
       <div className="col-sm-5">
         {time.map((item, index) => (
-          <select key={index} className="custom-select mb-1"
-            onChange={handleTimeChange}
-            defaultValue={item}>
-            <option value="з 8.00 до 13.05">з 8.00 до 13.05</option>
-            <option value="з 17.00 до 22.00">з 17.00 до 22.00</option>
-          </select>
+          <div key={index} className="row mb-1 position-relative">
+            <div className="col-sm-6">
+              <ReactSelectInput
+                placeholder="початок"
+                className="time-select-input"
+                autoFocus={false}
+                options={hours}
+              />
+            </div>
+            <div className="col-sm-6">
+              <ReactSelectInput
+                placeholder="кінець"
+                className="time-select-input"
+                autoFocus={false}
+                options={hours}
+              />
+            </div>
+            <button className="btn btn-danger">-</button>
+          </div>
         ))}
-        {/* <input type="text" className="form-control" placeholder="з 8.00 до 13.05" /> */}
         <button className="btn btn-primary time-add d-block ml-auto"
           onClick={handleTimeAdd}>+</button>
       </div>
@@ -103,70 +125,70 @@ export const Time = ({ time, time_expanded, handleTimeChange, handleTimeAdd }) =
 export const Exercises = (props) => {
   return (
     <Fragment>
-      <div className="form-group row">
-        <label htmlFor="time" className="col-sm-2 col-form-label">Заняття:</label>
-        <div className="col-sm-10">
-          <div className="row mb-2">
-            <div className="col-12 d-flex flex-row">
-              <div class="custom-control custom-checkbox mr-3">
-                <input type="checkbox"
-                  className="custom-control-input" id="mainChief"
-                  checked={props.isMainChief}
-                  onChange={props.toggleMainChief} />
-                <label className="custom-control-label"
-                  htmlFor="mainChief">Загальний керівник</label>
-              </div>
-              <div class="custom-control custom-checkbox">
-                <input type="checkbox"
-                  className="custom-control-input" id="medicalWorker"
-                  checked={props.isPheldsher}
-                  onChange={props.togglePheldsher} />
-                <label className="custom-control-label"
-                  htmlFor="medicalWorker">Черговий фельдшер</label>
-              </div>
-            </div>
-          </div>
-          {props.exercises.map((item, index) => {
-            return (
-              <div key={index} className="row mb-1">
-                <div className="col-6">
-                  {/* Exercise name */}
-                  <select className="custom-select" defaultValue="1" id="exercise_name">
-                    <option value="1">загальний керівник</option>
-                    <option value="2">інженерна підготовка</option>
-                    <option value="3">психологічна підготовка</option>
-                    <option value="4">розвідувальна підготовка</option>
-                    <option value="5">військова топографія</option>
-                    <option value="6">підготовка зі зв'язку</option>
-                    <option value="7">РХБ захист</option>
-                    <option value="8">фельдшер</option>
-                  </select>
-                </div>
-                <div className="col-6">
-                  {/* Exercise chief */}
-                  <ReactSelectInput
-                    placeholder="керівник"
-                    className="exercise-chief"
-                    autoFocus={false}
-                    options={exercise_chiefs}
-                  />
+          <div className="form-group row">
+            <label htmlFor="time" className="col-sm-2 col-form-label">Заняття:</label>
+            <div className="col-sm-10">
+              <div className="row mb-2">
+                <div className="col-12 d-flex flex-row">
+                  <div class="custom-control custom-checkbox mr-3">
+                    <input type="checkbox"
+                      className="custom-control-input" id="mainChief"
+                      checked={props.isMainChief}
+                      onChange={props.toggleMainChief} />
+                    <label className="custom-control-label"
+                      htmlFor="mainChief">Загальний керівник</label>
+                  </div>
+                  <div class="custom-control custom-checkbox">
+                    <input type="checkbox"
+                      className="custom-control-input" id="medicalWorker"
+                      checked={props.isPheldsher}
+                      onChange={props.togglePheldsher} />
+                    <label className="custom-control-label"
+                      htmlFor="medicalWorker">Черговий фельдшер</label>
+                  </div>
                 </div>
               </div>
-            )
-          })}
+              {props.exercises.map((item, index) => {
+                return (
+                  <div key={index} className="row mb-1">
+                    <div className="col-6">
+                      {/* Exercise name */}
+                      <select className="custom-select" defaultValue="1" id="exercise_name">
+                        <option value="1">загальний керівник</option>
+                        <option value="2">інженерна підготовка</option>
+                        <option value="3">психологічна підготовка</option>
+                        <option value="4">розвідувальна підготовка</option>
+                        <option value="5">військова топографія</option>
+                        <option value="6">підготовка зі зв'язку</option>
+                        <option value="7">РХБ захист</option>
+                        <option value="8">фельдшер</option>
+                      </select>
+                    </div>
+                    <div className="col-6">
+                      {/* Exercise chief */}
+                      <ReactSelectInput
+                        placeholder="керівник"
+                        className="exercise-chief"
+                        autoFocus={false}
+                        options={exercise_chiefs}
+                      />
+                    </div>
+                  </div>
+                )
+              })}
 
-          <div className="row">
-            <div className="col-12">
-              {/* Add exercise */}
-              <button className="btn btn-primary time-add d-block ml-auto"
-                onClick={props.handleExerciseAdd}>+</button>
-            </div>
-            <div className="col-12">
-              <p>Текст заміни</p>
+              <div className="row">
+                <div className="col-12">
+                  {/* Add exercise */}
+                  <button className="btn btn-primary time-add d-block ml-auto"
+                    onClick={props.handleExerciseAdd}>+</button>
+                </div>
+                <div className="col-12">
+                  <p>Текст заміни</p>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    </Fragment>
-  )
+        </Fragment>
+        )
 }

@@ -37,6 +37,71 @@ class TacticsPage extends React.Component {
     isMainChief: true
   }
 
+  handleSubmit = e => {
+    e.preventDefault();
+
+    const data = this.state;
+
+    axios.post(`http://localhost:8080/api/tactics`, data)
+      .then(res => {
+        console.log(res);
+      }, err => {
+        console.log(err);
+      });
+  }
+
+  render() {
+    return (
+      <div className="tactics-page">
+        <div className="container">
+          <form action="#" autoComplete="off" className="tactics-form"
+            onSubmit={this.handleSubmit}>
+            <h2>Наказ на тактику</h2>
+            {/* Squadron */}
+            <Squadron
+              squadron={this.state.squadron}
+              handleSquadronChange={this.handleSquadronChange}
+            />
+            {/* Platoons */}
+            <Platoons
+              platoons={this.state.platoons}
+              platoons_expanded={this.state.platoons_expanded}
+              handlePlatoonsChange={this.handlePlatoonsChange}
+            />
+            {/* Date short */}
+            <DateShort
+              date={this.state.date}
+              handleDateChange={this.handleDateChange}
+            />
+            {/* Date expanded */}
+            <DateExpanded
+              date_expanded={this.state.date_expanded}
+              handleDateExpandedChange={this.handleDateExpandedChange}
+            />
+            {/* Time */}
+            <Time
+              time={this.state.time}
+              time_expanded={this.state.time_expanded}
+              handleTimeChange={this.handleTimeChange}
+              handleTimeAdd={this.handleTimeAdd}
+            />
+            {/* Exercises */}
+            <Exercises 
+              isMainChief={this.state.isMainChief}
+              toggleMainChief={this.toggleMainChief}
+              isPheldsher={this.state.isPheldsher}
+              togglePheldsher={this.togglePheldsher}
+              isMainChief={this.state.isMainChief}
+              exercises={this.state.exercises}
+              handleExerciseAdd={this.handleExerciseAdd}
+            />
+            <button type="submit" className="btn btn-primary m-auto d-block">Згенерувати</button>
+          </form>
+        </div>
+      </div>
+    )
+  }
+
   componentDidMount() {
     this.setDate();
   }
@@ -189,71 +254,6 @@ class TacticsPage extends React.Component {
         isMainChief: !isMainChief
       }
     });
-  }
-
-  handleSubmit = e => {
-    e.preventDefault();
-
-    const data = this.state;
-
-    axios.post(`http://localhost:8080/api/tactics`, data)
-      .then(res => {
-        console.log(res);
-      }, err => {
-        console.log(err);
-      });
-  }
-
-  render() {
-    return (
-      <div className="tactics-page">
-        <div className="container">
-          <form action="#" autoComplete="off" className="tactics-form"
-            onSubmit={this.handleSubmit}>
-            <h2>Наказ на тактику</h2>
-            {/* Squadron */}
-            <Squadron
-              squadron={this.state.squadron}
-              handleSquadronChange={this.handleSquadronChange}
-            />
-            {/* Platoons */}
-            <Platoons
-              platoons={this.state.platoons}
-              platoons_expanded={this.state.platoons_expanded}
-              handlePlatoonsChange={this.handlePlatoonsChange}
-            />
-            {/* Date short */}
-            <DateShort
-              date={this.state.date}
-              handleDateChange={this.handleDateChange}
-            />
-            {/* Date expanded */}
-            <DateExpanded
-              date_expanded={this.state.date_expanded}
-              handleDateExpandedChange={this.handleDateExpandedChange}
-            />
-            {/* Time */}
-            <Time
-              time={this.state.time}
-              time_expanded={this.state.time_expanded}
-              handleTimeChange={this.handleTimeChange}
-              handleTimeAdd={this.handleTimeAdd}
-            />
-            {/* Exercises */}
-            <Exercises 
-              isMainChief={this.state.isMainChief}
-              toggleMainChief={this.toggleMainChief}
-              isPheldsher={this.state.isPheldsher}
-              togglePheldsher={this.togglePheldsher}
-              isMainChief={this.state.isMainChief}
-              exercises={this.state.exercises}
-              handleExerciseAdd={this.handleExerciseAdd}
-            />
-            <button type="submit" className="btn btn-primary m-auto d-block">Згенерувати</button>
-          </form>
-        </div>
-      </div>
-    )
   }
 }
 

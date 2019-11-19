@@ -19,7 +19,7 @@
       }
     }
   }
-  .exercise-chief {
+  .exercise-chief, .time-select-input {
     position: relative;
     .ris-clearable {
       position: absolute;
@@ -53,6 +53,7 @@
       position: absolute;
       top: 38px;
       z-index: 100;
+      width: 100%;
       background: #fff;
       max-height: 200px;
       overflow-y: auto;
