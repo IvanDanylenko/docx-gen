@@ -1,4 +1,5 @@
 .tactics-page {
+  padding: 0 0 40px;
   .chiefInputContainer {
     width: 100%;
     display: block;
@@ -49,6 +50,12 @@
       }
     }
     .ris-options {
+      position: absolute;
+      top: 38px;
+      z-index: 100;
+      background: #fff;
+      max-height: 200px;
+      overflow-y: auto;
       border: 1px solid #ced4da;
       .ris-option {
         padding: 0 0.75rem;

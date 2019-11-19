@@ -1,42 +1,18 @@
 import React from 'react';
 import axios from 'axios';
-import ReactSelectInput from 'react-select-input';
-import chiefs from '../../database/exercise_chiefs.json';
 import days from '../../database/days.json';
 import months from '../../database/months.json';
 import './tactics-page.scss';
-
-const mockData = [{
-  name: 'testName1',
-  displayValue: 'testValue1'
-}, {
-  name: 'testName2',
-  displayValue: 'testValue2'
-}, {
-  name: 'testName3',
-  displayValue: 'testValue3'
-}, {
-  name: 'testName4',
-  displayValue: 'testValue4'
-}, {
-  name: 'testName5',
-  displayValue: 'testValue5'
-}, {
-  name: 'testName6',
-  displayValue: 'testValue6'
-}, {
-  name: 'testName7',
-  displayValue: 'testValue7'
-}, {
-  name: 'testName8',
-  displayValue: 'testValue8'
-}, {
-  name: 'testName9',
-  displayValue: 'testValue9'
-}]
+import {
+  Squadron,
+  Platoons,
+  DateShort,
+  DateExpanded,
+  Time,
+  Exercises
+} from './parts';
 
 class TacticsPage extends React.Component {
-
   state = {
     date: '.11.19',
     date_expanded: 'Восьмого листопада 2019 року',
@@ -200,7 +176,7 @@ class TacticsPage extends React.Component {
   }
 
   togglePheldsher = () => {
-    this.setState(({isPheldsher}) => {
+    this.setState(({ isPheldsher }) => {
       return {
         isPheldsher: !isPheldsher
       }
@@ -208,7 +184,7 @@ class TacticsPage extends React.Component {
   }
 
   toggleMainChief = () => {
-    this.setState(({isMainChief}) => {
+    this.setState(({ isMainChief }) => {
       return {
         isMainChief: !isMainChief
       }
@@ -229,10 +205,6 @@ class TacticsPage extends React.Component {
   }
 
   render() {
-    const data = mockData
-    const displayAll = false
-    const isObject = false
-
     return (
       <div className="tactics-page">
         <div className="container">
@@ -240,172 +212,44 @@ class TacticsPage extends React.Component {
             onSubmit={this.handleSubmit}>
             <h2>Наказ на тактику</h2>
             {/* Squadron */}
-            <div className="form-group row">
-              <label htmlFor="squadron" className="col-sm-2 col-form-label">Виберіть роту:</label>
-              <div className="col-sm-5">
-                <select className="custom-select"
-                  onChange={this.handleSquadronChange}
-                  defaultValue="1" id="squadron">
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                </select>
-              </div>
-              <div className="col-sm-5">
-                <span>{this.state.squadron}</span>
-              </div>
-            </div>
+            <Squadron
+              squadron={this.state.squadron}
+              handleSquadronChange={this.handleSquadronChange}
+            />
             {/* Platoons */}
-            <div className="form-group row">
-              <label htmlFor="platoons" className="col-sm-2 col-form-label">Укажіть взвод(и):</label>
-              <div className="col-sm-5">
-                <input id="platoons" type="text"
-                  value={this.state.platoons}
-                  onChange={this.handlePlatoonsChange}
-                  className="form-control" />
-                <small className="form-text text-muted">(Напр.: 0 або "" - всі взводи; 1,3 - перелік; 1-3 - проміжок)</small>
-              </div>
-              <div className="col-sm-5">
-                <span>{this.state.platoons_expanded}</span>
-              </div>
-            </div>
+            <Platoons
+              platoons={this.state.platoons}
+              platoons_expanded={this.state.platoons_expanded}
+              handlePlatoonsChange={this.handlePlatoonsChange}
+            />
             {/* Date short */}
-            <div className="form-group row">
-              <label htmlFor="date" className="col-sm-2 col-form-label">Дата наказу:</label>
-              <div className="col-sm-5">
-                <input id="date" type="text" className="form-control"
-                  value={this.state.date}
-                  onChange={this.handleDateChange}
-                  placeholder=".11.19" />
-              </div>
-              <div className="col-sm-5">
-                <span>{this.state.date}</span>
-              </div>
-            </div>
+            <DateShort
+              date={this.state.date}
+              handleDateChange={this.handleDateChange}
+            />
             {/* Date expanded */}
-            <div className="form-group row">
-              <label htmlFor="date_expanded" className="col-sm-2 col-form-label">Дата словами:</label>
-              <div className="col-sm-5">
-                <input id="date_expanded" type="text" className="form-control"
-                  value={this.state.date_expanded}
-                  onChange={this.handleDateExpandedChange}
-                  placeholder="Восьмого листопада 2019 року" />
-              </div>
-              <div className="col-sm-5">
-                <span>{this.state.date_expanded}</span>
-              </div>
-            </div>
+            <DateExpanded
+              date_expanded={this.state.date_expanded}
+              handleDateExpandedChange={this.handleDateExpandedChange}
+            />
             {/* Time */}
-            <div className="form-group row">
-              <label htmlFor="time" className="col-sm-2 col-form-label">Час проведення:</label>
-              <div className="col-sm-5">
-                {this.state.time.map((item, index) => (
-                  <select key={index} className="custom-select mb-1"
-                    onChange={this.handleTimeChange}
-                    defaultValue={item}>
-                    <option value="з 8.00 до 13.05">з 8.00 до 13.05</option>
-                    <option value="з 17.00 до 22.00">з 17.00 до 22.00</option>
-                  </select>
-                ))}
-                {/* <input type="text" className="form-control" placeholder="з 8.00 до 13.05" /> */}
-                <button className="btn btn-primary time-add d-block ml-auto"
-                  onClick={this.handleTimeAdd}>+</button>
-              </div>
-              <div className="col-sm-5">
-                {this.state.time_expanded}
-              </div>
-            </div>
+            <Time
+              time={this.state.time}
+              time_expanded={this.state.time_expanded}
+              handleTimeChange={this.handleTimeChange}
+              handleTimeAdd={this.handleTimeAdd}
+            />
             {/* Exercises */}
-            <div className="form-group row">
-              <label htmlFor="time" className="col-sm-2 col-form-label">Заняття:</label>
-              <div className="col-sm-10">
-                <div className="row mb-2">
-                  <div className="col-12 d-flex flex-row">
-                    <div class="custom-control custom-checkbox mr-3">
-                      <input type="checkbox" 
-                        className="custom-control-input" id="mainChief"
-                        checked={this.state.isMainChief}
-                        onChange={this.toggleMainChief} />
-                      <label className="custom-control-label" 
-                        htmlFor="mainChief">Загальний керівник</label>
-                    </div>
-                    <div class="custom-control custom-checkbox">
-                      <input type="checkbox" 
-                        className="custom-control-input" id="medicalWorker"
-                        checked={this.state.isPheldsher}
-                        onChange={this.togglePheldsher} />
-                      <label className="custom-control-label" 
-                        htmlFor="medicalWorker">Черговий фельдшер</label>
-                    </div>
-                  </div>
-                </div>
-                {this.state.exercises.map((item, index) => {
-                  return (
-                    <div key={index} className="row mb-1">
-                      <div className="col-6">
-                        {/* Exercise name */}
-                        <select className="custom-select" defaultValue="1" id="exercise_name">
-                          <option value="1">загальний керівник</option>
-                          <option value="2">інженерна підготовка</option>
-                          <option value="3">психологічна підготовка</option>
-                          <option value="4">розвідувальна підготовка</option>
-                          <option value="5">військова топографія</option>
-                          <option value="6">підготовка зі зв'язку</option>
-                          <option value="7">РХБ захист</option>
-                          <option value="8">фельдшер</option>
-                        </select>
-                      </div>
-                      <div className="col-6">
-                        {/* Exercise chief */}
-                        {/* <input type="text" className="form-control" placeholder="керівник"
-                        onChange={this.handleExerciseChiefChange} /> */}
-
-                        {/* <ReactInputSelect
-                          containerClass='chiefInputContainer'
-                          containerId='containerIdTest'
-                          data={chiefs}
-                          dataKey="name"
-                          // dataFilter={this.customFilterFunction}
-                          displayAll={displayAll}
-                          dropdownId='dropdownIdTest'
-                          dropdownOptionId='dropdownOptionIdTest'
-                          dropdownOptionClass='form-control'
-                          onChange={this.handleExerciseChiefChange}
-                          onBlur={this.handleOnBlur}
-                          onOptionClick={this.handleChiefsOptionClick}
-                          inputClass='form-control'
-                          isObject={true}
-                          value={this.state.inputChiefsValue}
-                        /> */}
-
-                        <ReactSelectInput
-                          placeholder="керівник"
-                          className="exercise-chief"
-                          autoFocus={false}
-                          options={[{ label: "Водіння", value: "f"},
-                          { label: "Виживання", value: "f2"}]}
-                        />
-
-                      </div>
-                    </div>
-                  )
-                })}
-
-                <div className="row">
-                  <div className="col-12">
-                    {/* Add exercise */}
-                    <button className="btn btn-primary time-add d-block ml-auto"
-                      onClick={this.handleExerciseAdd}>+</button>
-                  </div>
-                  <div className="col-12">
-                    Текст заміни
-                  </div>
-                </div>
-                <button type="submit" className="btn btn-primary">Згенерувати</button>
-              </div>
-            </div>
+            <Exercises 
+              isMainChief={this.state.isMainChief}
+              toggleMainChief={this.toggleMainChief}
+              isPheldsher={this.state.isPheldsher}
+              togglePheldsher={this.togglePheldsher}
+              isMainChief={this.state.isMainChief}
+              exercises={this.state.exercises}
+              handleExerciseAdd={this.handleExerciseAdd}
+            />
+            <button type="submit" className="btn btn-primary m-auto d-block">Згенерувати</button>
           </form>
         </div>
       </div>
