@@ -1,23 +1,7 @@
 .tactics-page {
   padding: 0 0 40px;
-  .chiefInputContainer {
-    width: 100%;
-    display: block;
-    .reactInputSelectDropdownContainer {
-      border-radius: 0 0 10px 10px;
-      border: 1px solid #ced4da;
-      border-top: none;
-      max-height: 150px;
-      width: 100%;
-    }
-    .reactInputSelectDropdownOption {
-      border: none;
-      cursor: pointer;
-      &:hover {
-        background: #007bff;
-        color: #fff;
-      }
-    }
+  .svg-inline--fa {
+    cursor: pointer;
   }
   .exercise-chief, .time-select-input {
     position: relative;

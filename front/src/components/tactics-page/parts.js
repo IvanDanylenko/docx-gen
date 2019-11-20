@@ -1,6 +1,9 @@
 import React, { Fragment } from 'react'
+import exercise_names from '../../database/exercise_names.json';
 import exercise_chiefs from '../../database/exercise_chiefs.json';
 import ReactSelectInput from 'react-select-input';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
 export const Squadron = ({ squadron, handleSquadronChange }) => {
   return (
@@ -42,18 +45,18 @@ export const Platoons = ({ platoons, platoons_expanded, handlePlatoonsChange }) 
   )
 }
 
-export const DateShort = ({ date, handleDateChange }) => {
+export const DateShort = ({ dateStr, date_short, handleDateChange }) => {
   return (
     <div className="form-group row">
       <label htmlFor="date" className="col-sm-2 col-form-label">Дата наказу:</label>
       <div className="col-sm-5">
         <input id="date" type="text" className="form-control"
-          value={date}
+          value={dateStr}
           onChange={handleDateChange}
-          placeholder=".11.19" />
+          placeholder="dd.mm.yy" />
       </div>
       <div className="col-sm-5">
-        <span>{date}</span>
+        <span>{date_short}</span>
       </div>
     </div>
   )
@@ -76,7 +79,15 @@ export const DateExpanded = ({ date_expanded, handleDateExpandedChange }) => {
   )
 }
 
-export const Time = ({ time, time_expanded, handleTimeChange, handleTimeAdd }) => {
+export const Time = ({ 
+  time, 
+  time_expanded, 
+  handleTimeChange,
+  handleTimeSelect,
+  handleTimeClear, 
+  handleTimeAdd, 
+  handleTimeRemove
+}) => {
   const hours = [
     { label: '8.00', value: '8.00' },
     { label: '13.05', value: '13.05' },
@@ -92,24 +103,42 @@ export const Time = ({ time, time_expanded, handleTimeChange, handleTimeAdd }) =
       <label htmlFor="time" className="col-sm-2 col-form-label">Час проведення:</label>
       <div className="col-sm-5">
         {time.map((item, index) => (
-          <div key={index} className="row mb-1 position-relative">
-            <div className="col-sm-6">
-              <ReactSelectInput
-                placeholder="початок"
-                className="time-select-input"
-                autoFocus={false}
-                options={hours}
+          <div key={index} className="row mb-1 no-gutters">
+            <div className="col-sm-11">
+              <div className="row no-gutters">
+                <div className="col-sm-6">
+                  <ReactSelectInput
+                    placeholder="початок"
+                    className="time-select-input mr-2"
+                    autoFocus={false}
+                    value={item[0]}
+                    options={hours}
+                    onChange={(e) => handleTimeChange(e, index, 0)}
+                    onSelect={(option) => handleTimeSelect(option, index, 0)}
+                    onClear={() => handleTimeClear(index, 0)}
+                  />
+                </div>
+                <div className="col-sm-6">
+                  <ReactSelectInput
+                    placeholder="кінець"
+                    className="time-select-input"
+                    autoFocus={false}
+                    value={item[1]}
+                    options={hours}
+                    onChange={(e) => handleTimeChange(e, index, 1)}
+                    onSelect={(option) => handleTimeSelect(option, index, 1)}
+                    onClear={() => handleTimeClear(index, 1)}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="col-sm-1 d-flex justify-content-end align-items-center">
+              <FontAwesomeIcon 
+                onClick={() => handleTimeRemove(index)}
+                icon={faTrash}
+                style={{opacity: time.length === 1 ? ".6" : "1"}}
               />
             </div>
-            <div className="col-sm-6">
-              <ReactSelectInput
-                placeholder="кінець"
-                className="time-select-input"
-                autoFocus={false}
-                options={hours}
-              />
-            </div>
-            <button className="btn btn-danger">-</button>
           </div>
         ))}
         <button className="btn btn-primary time-add d-block ml-auto"
@@ -130,7 +159,7 @@ export const Exercises = (props) => {
             <div className="col-sm-10">
               <div className="row mb-2">
                 <div className="col-12 d-flex flex-row">
-                  <div class="custom-control custom-checkbox mr-3">
+                  <div className="custom-control custom-checkbox mr-3">
                     <input type="checkbox"
                       className="custom-control-input" id="mainChief"
                       checked={props.isMainChief}
@@ -138,7 +167,7 @@ export const Exercises = (props) => {
                     <label className="custom-control-label"
                       htmlFor="mainChief">Загальний керівник</label>
                   </div>
-                  <div class="custom-control custom-checkbox">
+                  <div className="custom-control custom-checkbox">
                     <input type="checkbox"
                       className="custom-control-input" id="medicalWorker"
                       checked={props.isPheldsher}
@@ -153,16 +182,15 @@ export const Exercises = (props) => {
                   <div key={index} className="row mb-1">
                     <div className="col-6">
                       {/* Exercise name */}
-                      <select className="custom-select" defaultValue="1" id="exercise_name">
-                        <option value="1">загальний керівник</option>
-                        <option value="2">інженерна підготовка</option>
-                        <option value="3">психологічна підготовка</option>
-                        <option value="4">розвідувальна підготовка</option>
-                        <option value="5">військова топографія</option>
-                        <option value="6">підготовка зі зв'язку</option>
-                        <option value="7">РХБ захист</option>
-                        <option value="8">фельдшер</option>
-                      </select>
+                      <ReactSelectInput
+                        placeholder="назва заняття"
+                        className="exercise-chief"
+                        autoFocus={false}
+                        options={exercise_names}
+                        // onChange={(e) => handleTimeChange(e, index, 0)}
+                        // onSelect={(option) => handleTimeSelect(option, index, 0)}
+                        // onClear={() => handleTimeClear(index, 0)}
+                      />
                     </div>
                     <div className="col-6">
                       {/* Exercise chief */}
