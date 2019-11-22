@@ -35,8 +35,9 @@ function writeToDocTemplateFile(data) {
   var buf = doc.getZip()
     .generate({ type: 'nodebuffer' });
 
+  const fileName = `Тк ${data.squadron.slice(0,1)}НР ${data.dateObj.day}.${data.dateObj.month}`;
   // buf is a nodejs buffer, you can either write it to a file or do anything else with it.
-  fs.writeFileSync(path.resolve(__dirname, '../templates/tactics_output.docx'), buf);
+  fs.writeFileSync(path.resolve(__dirname, `../templates/output/${fileName}.docx`), buf);
 }
 
 exports.tacticsGenDocx = function (req, res) {
@@ -63,15 +64,18 @@ exports.tacticsGenDocx = function (req, res) {
   };
 
   const data = {
-    date: body.date,
+    dateObj: body.date,
+    date: body.date_short,
     date_expanded: body.date_expanded,
-    platoons: body.platoons,
+    platoons: body.platoons_expanded + ' ',
     squadron: body.squadron,
-    time: body.time,
-    exercises: body.exercises
+    time: body.time_expanded,
+    exercises: body.exercises_generated
   };
 
-  writeToDocTemplateFile(body);
+  // console.log(data)
+
+  writeToDocTemplateFile(data);
 
   // RESPONCE
   res.status(200).json("Document generated");

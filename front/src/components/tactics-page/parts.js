@@ -70,7 +70,9 @@ export const DateExpanded = ({ date_expanded, handleDateExpandedChange }) => {
         <input id="date_expanded" type="text" className="form-control"
           value={date_expanded}
           onChange={handleDateExpandedChange}
-          placeholder="Восьмого листопада 2019 року" />
+          placeholder="Восьмого листопада 2019 року" 
+          readOnly  
+        />
       </div>
       <div className="col-sm-5">
         <span>{date_expanded}</span>
@@ -141,7 +143,7 @@ export const Time = ({
             </div>
           </div>
         ))}
-        <button className="btn btn-primary time-add d-block ml-auto"
+        <button type="button" className="btn btn-primary time-add d-block ml-auto"
           onClick={handleTimeAdd}>+</button>
       </div>
       <div className="col-sm-5">
@@ -154,69 +156,114 @@ export const Time = ({
 export const Exercises = (props) => {
   return (
     <Fragment>
-          <div className="form-group row">
-            <label htmlFor="time" className="col-sm-2 col-form-label">Заняття:</label>
-            <div className="col-sm-10">
-              <div className="row mb-2">
-                <div className="col-12 d-flex flex-row">
-                  <div className="custom-control custom-checkbox mr-3">
-                    <input type="checkbox"
-                      className="custom-control-input" id="mainChief"
-                      checked={props.isMainChief}
-                      onChange={props.toggleMainChief} />
-                    <label className="custom-control-label"
-                      htmlFor="mainChief">Загальний керівник</label>
-                  </div>
-                  <div className="custom-control custom-checkbox">
-                    <input type="checkbox"
-                      className="custom-control-input" id="medicalWorker"
-                      checked={props.isPheldsher}
-                      onChange={props.togglePheldsher} />
-                    <label className="custom-control-label"
-                      htmlFor="medicalWorker">Черговий фельдшер</label>
-                  </div>
-                </div>
+      <div className="form-group row">
+        <label htmlFor="time" className="col-sm-2 col-form-label">Заняття:</label>
+        <div className="col-sm-10">
+          <div className="row mb-2">
+            <div className="col-9 d-flex flex-row">
+              <div className="custom-control custom-checkbox mr-3">
+                <input type="checkbox"
+                  className="custom-control-input" id="mainChief"
+                  checked={props.isMainChief}
+                  onChange={props.toggleMainChief} />
+                <label className="custom-control-label"
+                  htmlFor="mainChief">Загальний керівник</label>
               </div>
-              {props.exercises.map((item, index) => {
-                return (
-                  <div key={index} className="row mb-1">
-                    <div className="col-6">
-                      {/* Exercise name */}
-                      <ReactSelectInput
-                        placeholder="назва заняття"
-                        className="exercise-chief"
-                        autoFocus={false}
-                        options={exercise_names}
-                        // onChange={(e) => handleTimeChange(e, index, 0)}
-                        // onSelect={(option) => handleTimeSelect(option, index, 0)}
-                        // onClear={() => handleTimeClear(index, 0)}
-                      />
-                    </div>
-                    <div className="col-6">
-                      {/* Exercise chief */}
-                      <ReactSelectInput
-                        placeholder="керівник"
-                        className="exercise-chief"
-                        autoFocus={false}
-                        options={exercise_chiefs}
-                      />
-                    </div>
-                  </div>
-                )
-              })}
-
-              <div className="row">
-                <div className="col-12">
-                  {/* Add exercise */}
-                  <button className="btn btn-primary time-add d-block ml-auto"
-                    onClick={props.handleExerciseAdd}>+</button>
-                </div>
-                <div className="col-12">
-                  <p>Текст заміни</p>
-                </div>
+              <div className="custom-control custom-checkbox">
+                <input type="checkbox"
+                  className="custom-control-input" id="medicalWorker"
+                  checked={props.isPheldsher}
+                  onChange={props.togglePheldsher} />
+                <label className="custom-control-label"
+                  htmlFor="medicalWorker">Черговий фельдшер</label>
               </div>
             </div>
+            <div className="col-1 d-flex justify-content-center">
+              <span>Вдень</span>
+            </div>
+            <div className="col-1 d-flex justify-content-center">
+              <span>Вночі</span>
+            </div>
+            <div className="col-1">
+              <button type="button" className="btn btn-primary time-add d-block ml-auto"
+                onClick={props.handleExerciseAdd}>+</button>
+            </div>
           </div>
-        </Fragment>
-        )
+          {props.exercises.map((item, index) => {
+            return (
+              <div key={index} className="row mb-1 no-gutters flex-nowrap">
+                <div className="col-4 mr-2">
+                  {/* { console.log(item, index) } */}
+                  {/* Exercise name */}
+                  <ReactSelectInput
+                    placeholder="назва заняття"
+                    className="exercise-chief"
+                    autoFocus={false}
+                    value={item.name}
+                    options={exercise_names}
+                    onChange={(e) => props.handleExerciseChange(e, index, 'name')}
+                    onSelect={(option) => props.handleExerciseSelect(option, index, 'name')}
+                    onClear={() => props.handleExerciseClear(index, 'name')}
+                  />
+                </div>
+                <div className="col-5 mr-2">
+                  {/* Exercise chief */}
+                  <ReactSelectInput
+                    placeholder="керівник"
+                    className="exercise-chief"
+                    autoFocus={false}
+                    value={item.chief}
+                    options={exercise_chiefs}
+                    onChange={(e) => props.handleExerciseChange(e, index, 'chief')}
+                    onSelect={(option) => props.handleExerciseSelect(option, index, 'chief')}
+                    onClear={() => props.handleExerciseClear(index, 'chief')}
+                  />
+                </div>
+                <div className="col-1 mr-2 d-flex justify-content-center">
+                  <div className="custom-control custom-checkbox">
+                    <input type="checkbox"
+                      className="custom-control-input"
+                      id={`exerciseDay${index}`}
+                      checked={item.isDay}
+                      onChange={() => props.toggleExerciseDayNight(index, 'isDay')} />
+                    <label className="custom-control-label"
+                      htmlFor={`exerciseDay${index}`}></label>
+                    </div>
+                </div>
+                <div className="col-1 mr-2 d-flex justify-content-center">
+                  <div className="custom-control custom-checkbox">
+                    <input type="checkbox"
+                      className="custom-control-input"
+                      id={`exerciseNight${index}`}
+                      checked={item.isNight}
+                      onChange={() => props.toggleExerciseDayNight(index, 'isNight')} />
+                    <label className="custom-control-label"
+                      htmlFor={`exerciseNight${index}`}></label>
+                  </div>
+                </div>
+                <div className="col-1 d-flex justify-content-start align-items-center">
+                  <FontAwesomeIcon 
+                    onClick={() => props.handleExerciseRemove(index)}
+                    icon={faTrash}
+                    style={{opacity: props.exercises.length === 1 ? ".6" : "1"}}
+                  />
+                </div>
+              </div>
+            )
+          })}
+
+          <div className="row mt-3">
+            <div className="col-12">
+              {/* <p>Текст заміни</p> */}
+              {props.exercises_generated.map((item, index) => (
+                <p key={index} className="mb-1">
+                  { item }
+                </p>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </Fragment>
+  )
 }

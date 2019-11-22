@@ -2,6 +2,8 @@ import React from 'react';
 import axios from 'axios';
 import days from '../../database/days.json';
 import months from '../../database/months.json';
+import exercise_names from '../../database/exercise_names.json';
+import exercise_chiefs from '../../database/exercise_chiefs.json';
 import './tactics-page.scss';
 import {
   Squadron,
@@ -20,40 +22,36 @@ class TacticsPage extends React.Component {
     squadron: '1 навчальної роти',
     // Час проведення заняття з 08.00 до 13.05 та з 20.00 до 24.00.
     time_expanded: 'з 08.00 до 13.05',
-    exercises: [
-      {
-        exercise_name: 'загальним керівником занять',
-        exercise_chief: 'тимчасово виконуючого обов’язки начальника циклової комісії загально-військових дисциплін старшого сержанта Яремчука В.М.;'
-      }
-    ],
+    exercises_generated: [],
 
     // helping state
     platoons: '',
     time: [
       ['08.00', '13.05']
     ],
-    // exerciseChiefInput: '',
+    exercises: [
+      { name: '', chief: '', isDay: false, isNight: false }
+    ],
     date: {
       day: '',
       month: '',
       year: ''
     },
     dateStr: '',
-    inputChiefsValue: '',
-    inputChiefsObject: {},
     isPheldsher: true,
     isMainChief: true
   }
 
   handleSubmit = e => {
     e.preventDefault();
-    return;
+    // return;
 
     const data = this.state;
 
     axios.post(`http://localhost:8080/api/tactics`, data)
       .then(res => {
         console.log(res);
+        alert("Документ згенеровано");
       }, err => {
         console.log(err);
       });
@@ -106,7 +104,13 @@ class TacticsPage extends React.Component {
               togglePheldsher={this.togglePheldsher}
               isMainChief={this.state.isMainChief}
               exercises={this.state.exercises}
+              exercises_generated={this.state.exercises_generated}
               handleExerciseAdd={this.handleExerciseAdd}
+              handleExerciseRemove={this.handleExerciseRemove}
+              handleExerciseChange={this.handleExerciseChange}
+              handleExerciseSelect={this.handleExerciseSelect}
+              handleExerciseClear={this.handleExerciseClear}
+              toggleExerciseDayNight={this.toggleExerciseDayNight}
             />
             <button type="submit" className="btn btn-primary m-auto d-block">Згенерувати</button>
           </form>
@@ -267,11 +271,64 @@ class TacticsPage extends React.Component {
 
   handleExerciseAdd = () => {
     this.setState({
-      exercises: this.state.exercises.concat([{
-        exercise_name: '',
-        exercise_chief: ''
-      }])
+      exercises: this.state.exercises.concat([{ name: '', chief: '', isDay: false, isNight: false }])
     })
+  }
+
+  handleExerciseRemove = (index) => {
+    if (this.state.exercises.length === 1) return;
+
+    let exercises = JSON.parse(JSON.stringify(this.state.exercises));
+    exercises.splice(index, 1);
+    this.setState({ exercises }, this.generateExercisesText);
+  }
+
+  handleExerciseChange = (e, index, pos) => {
+    const exercises = JSON.parse(JSON.stringify(this.state.exercises));
+    exercises[index][pos] = e.target.value;
+    this.setState({ exercises }, this.generateExercisesText);
+  }
+
+  handleExerciseSelect = (option, index, pos) => {
+    const exercises = JSON.parse(JSON.stringify(this.state.exercises));
+    exercises[index][pos] = option.label;
+    this.setState({ exercises }, this.generateExercisesText);
+  }
+
+  handleExerciseClear = (index, pos) => {
+    const exercises = JSON.parse(JSON.stringify(this.state.exercises));
+    exercises[index][pos] = '';
+    this.setState({ exercises }, this.generateExercisesText);
+  }
+
+  toggleExerciseDayNight = (index, param) => {
+    const exercises = JSON.parse(JSON.stringify(this.state.exercises));
+    exercises[index][param] = !exercises[index][param];
+    this.setState({ exercises }, this.generateExercisesText);
+  }
+
+  generateExercisesText = () => {
+    const { exercises } = this.state;
+    const exercises_generated = [];
+    exercises.map((item, index) => {
+      let nameValue = exercise_names.find((name) => name.label === item.name) || {};
+      let chiefValue = exercise_chiefs.find((chief) => chief.label === item.chief) || {};
+
+      if (!nameValue.value) nameValue.value = item.name;
+      if (!chiefValue.value) chiefValue.value = item.chief;
+      
+      let dayTime = '';
+      const endSign = index === exercises.length - 1 ? '' : ';';
+      if (item.isDay && item.isNight) {
+        dayTime = '(вдень та вночі)';
+      } else if (item.isDay) {
+        dayTime = '(вдень)';
+      } else if (item.isNight) {
+        dayTime = '(вночі)';
+      }
+      exercises_generated[index] = `${nameValue.value} ${dayTime} – ${chiefValue.value}${endSign}`;
+      this.setState({ exercises_generated })
+    });
   }
 
   handleExerciseChiefChange = (e) => {
