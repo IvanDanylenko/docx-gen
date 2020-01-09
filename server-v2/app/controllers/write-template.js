@@ -48,6 +48,6 @@ exports.writeToDocTemplateFile = function (data) {
     .generate({type: 'nodebuffer'});
 
   // buf is a nodejs buffer, you can either write it to a file or do anything else with it.
-  fs.writeFileSync(path.resolve(__dirname, '../templates/output/vidomist-output.docx'), buf);
+  fs.writeFileSync(path.resolve(__dirname, '../templates/vidomist-output.docx'), buf);
   
 }

@@ -14,5 +14,8 @@
     "express": "^4.17.1",
     "pizzip": "^3.0.6",
     "read-excel-file": "^4.0.5"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
   }
 }
